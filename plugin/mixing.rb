@@ -25,7 +25,7 @@ class Mixing
     page = @agent.get(MIXI_URL + '/')
     form = page.forms.action('login.pl').first
     form.email = @conf['mixing.userid']
-    form.password = @conf['mixing.password']
+    form.password = @conf['mixing.password'].unpack('m').first
     @agent.submit(form)
     @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
   end
@@ -79,13 +79,16 @@ end
 def mixing_update
   return if /^comment|^showcomment/ =~ @mode
 
-  log = File.open('/tmp/debug.log', 'a+w')
-
-  log.puts(@mode)
-
   date = @date.strftime( "%Y%m%d" )
   diary = @diaries[date]
+
   return unless diary || diary.visible?
+
+#  log = File.open('E:\users\koichiro\workspace\mixing\debug.log', 'a+')
+#  log.puts('--------------------------------')
+#  log.puts(@mode)
+#  log.puts(diary.to_s)
+#  log.close
 
   mixi_context = []
 
@@ -96,19 +99,16 @@ def mixing_update
     }
   end
 
-  log.puts(mixi_context.to_s)
-
+  @mixing.login
   if @mode == 'append' then
     @mixing.add_diary( mixi_context )
   elsif @mode == 'replace' then
   end
-
-  log.close
 end
 
 def mixing_update_proc
   return unless @conf['mixing.userid'] || @conf['mixing.password']
-  return if @cgi.params['mixing_update'][0] == 'false'
+  return unless @cgi.params['mixing_update'][0] == 'false'
 
   mixing_update
 end
@@ -152,7 +152,9 @@ def mixing_edit_proc
   checked = @conf['mixing.default_update'] ? ' checked' : ''
   checked = @cgi.params['mixing_update'][0] == 'true' ? ' checked' : '' if @cgi.params['mixing_update'][0]
   r = <<-HTML
-  <input type="checkbox" name="mixing_update" value="false"#{checked} />
+  <div class="checkbox">
+  <input type="checkbox" name="mixing_update" value="false"#{checked} >
+  </div>
   #{@mixing_edit_label}
   HTML
 end
