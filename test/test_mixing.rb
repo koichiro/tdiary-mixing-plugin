@@ -8,14 +8,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../plugin/mixing.rb')
 
 class MixingTest < Test::Unit::TestCase
   def setup
-    conf = {}
-    conf['mixing.userid'] = ENV['MIXING_ID']
-    conf['mixing.password'] = ENV['MIXING_PW']
-    @mixing = Mixing::new( conf )
+    @mixing = Mixing::new
+    @mail = ENV['MIXING_ID']
+    @password = ENV['MIXING_PW']
   end
 
   def test_login
-    assert_not_nil @mixing.login
+    assert_not_nil @mixing.login(@mail, @password)
   end
 
   def test_diary_update
@@ -24,7 +23,7 @@ class MixingTest < Test::Unit::TestCase
       'body' => 'スクリプトテスト',
       'subtitle' => 'test'
     }
-    assert_not_nil @mixing.login
+    assert_not_nil @mixing.login(@mail, @password)
     assert_not_nil(@mixing.add_diary(ctx))
   end
 end

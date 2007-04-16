@@ -4,7 +4,7 @@
 #
 # options configurable through settings:
 #   @conf['mixing.userid'] : mixi login userid(e-mail)
-#   @conf['mixing.password'] : mixi login passord
+#   @conf['mixing.password'] : mixi login password
 #
 # Copyright (c) 2007 Koichiro Ohba <koichiro@meadowy.org>
 # Distributed under the GPL
@@ -13,19 +13,18 @@
 class Mixing
   MIXI_URL = 'http://mixi.jp'
 
-  def initialize( conf )
-    @conf = conf
+  def initialize
     require 'rubygems'
     require 'mechanize'
     @agent = WWW::Mechanize.new
     @agent.user_agent_alias = 'Mac Safari'
   end
 
-  def login
+  def login(userid, password)
     page = @agent.get(MIXI_URL + '/')
     form = page.forms.action('login.pl').first
-    form.email = @conf['mixing.userid']
-    form.password = @conf['mixing.password'].unpack('m').first
+    form.email = userid
+    form.password = password
     @agent.submit(form)
     @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
   end
@@ -74,7 +73,7 @@ class Mixing
   end
 end
 
-@mixing = Mixing::new( @conf )
+@mixing = Mixing::new
 
 def mixing_update
   return if /^comment|^showcomment/ =~ @mode
@@ -99,7 +98,7 @@ def mixing_update
     }
   end
 
-  @mixing.login
+  @mixing.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
   if @mode == 'append' then
     @mixing.add_diary( mixi_context )
   elsif @mode == 'replace' then
