@@ -9,13 +9,13 @@
 # Copyright (c) 2007 Koichiro Ohba <koichiro@meadowy.org>
 # Distributed under the GPL
 #
+require 'rubygems'
+require 'mechanize'
 
 class Mixing
   MIXI_URL = 'http://mixi.jp'
 
   def initialize
-    require 'rubygems'
-    require 'mechanize'
     @agent = WWW::Mechanize.new
     @agent.user_agent_alias = 'Mac Safari'
   end
