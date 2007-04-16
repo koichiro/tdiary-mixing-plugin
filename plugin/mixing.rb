@@ -128,6 +128,9 @@ def mixing_conf_html
   <p><input type="password" name="mixing.password" value="#{CGI::escapeHTML( @conf['mixing.password'].unpack('m').first ) if @conf['mixing.password']}"></p>
   <h3 class="subtitle">#{@mixing_default_update_label}</h3>
   <p><input type="checkbox" name="mixing.default_update" value="true"#{@conf['mixing.default_update'] ? ' checked': ''}>#{@mixing_default_update_desc}</input></p>
+  <h3 class="subtitle">#{@mixing_section_to_diary_label}</h3>
+  <p><input type="radio" name="mixing.section_to_diary" value="section_to_diary">#{@mixing_section_to_diary_desc}</input></p>
+  <p><input type="radio" name="mixing.section_to_dairy" value="diary_to_diary">#{@mixing_diary_to_diary_desc}</input></p>
   HTML
 end
 
