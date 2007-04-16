@@ -29,9 +29,20 @@ class Mixing
     @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
   end
 
-  def add_diary(ctx)
-    section = ctx.last
+  def add_last_section(ctx)
+    section = ctx['sections'].last
     edit_diary(html_strip(section['subtitle']), html_strip(section['body']))
+  end
+
+  def add_diary(ctx)
+    content = ''
+    ctx['sections'].each do |section|
+      content += "\n" if content != ''
+      content += '■ ' + html_strip(section['subtitle']) + "\n"
+      content += html_strip(section['body'])
+    end
+
+    edit_diary(ctx['title'], content)
   end
 
   def edit_diary(title = '', content  = '')
@@ -69,7 +80,7 @@ class Mixing
   end
 
   def html_strip( s )
-    s.gsub(/<.*?>/, "")
+    s.gsub("</p>", "\n").gsub(/<.*?>/, "")
   end
 end
 
@@ -89,10 +100,17 @@ def mixing_update
 #  log.puts(diary.to_s)
 #  log.close
 
-  mixi_context = []
+  mixi_context = {}
+  if diary.title == ''
+    mixi_context['title'] = 'タイトル'
+  else
+    mixi_context['title'] = diary.title
+  end
+
+  mixi_context['sections'] = []
 
   diary.each_section do |section|
-    mixi_context << {
+    mixi_context['sections'] << {
       'body' => section.body_to_html,
       'subtitle' => section.subtitle_to_html
     }
@@ -100,7 +118,11 @@ def mixing_update
 
   @mixing.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
   if @mode == 'append' then
-    @mixing.add_diary( mixi_context )
+    unless @conf['mixing.section_to_diary']
+      @mixing.add_diary( mixi_context )
+    else
+      @mixing.add_last_section( mixi_context )
+    end
   elsif @mode == 'replace' then
   end
 end
@@ -129,19 +151,20 @@ def mixing_conf_html
   <h3 class="subtitle">#{@mixing_default_update_label}</h3>
   <p><input type="checkbox" name="mixing.default_update" value="true"#{@conf['mixing.default_update'] ? ' checked': ''}>#{@mixing_default_update_desc}</input></p>
   <h3 class="subtitle">#{@mixing_section_to_diary_label}</h3>
-  <p><input type="radio" name="mixing.section_to_diary" value="section_to_diary">#{@mixing_section_to_diary_desc}</input></p>
-  <p><input type="radio" name="mixing.section_to_dairy" value="diary_to_diary">#{@mixing_diary_to_diary_desc}</input></p>
+  <p><input type="radio" name="mixing.section_to_diary" value="section_to_diary"#{(@conf['mixing.section_to_diary'] == nil || @conf['mixing.section_to_diary']) ? ' checked' : ''}>#{@mixing_section_to_diary_desc}</input></p>
+  <p><input type="radio" name="mixing.section_to_diary" value="diary_to_diary"#{@conf['mixing.section_to_diary'] == false ? ' checked' : ''}>#{@mixing_diary_to_diary_desc}</input></p>
   HTML
 end
 
 add_conf_proc( 'mixing', @mixing_label, 'update' ) do
   if @mode == 'saveconf' then
-		%w( userid password default_update ).each do |s|
+		%w( userid password default_update section_to_diary ).each do |s|
 			item = "mixing.#{s}"
 			@conf[item] = @cgi.params[item][0]
 		end
     @conf['mixing.default_update'] = @conf['mixing.default_update'] == 'true' ? true : false
     @conf['mixing.password'] = [@conf['mixing.password']].pack('m') if @conf['mixing.password']
+    @conf['mixing.section_to_diary'] = @conf['mixing.section_to_diary'] == 'section_to_diary' ? true : false
   end
 
   mixing_conf_html

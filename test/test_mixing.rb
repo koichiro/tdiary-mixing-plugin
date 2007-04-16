@@ -17,13 +17,27 @@ class MixingTest < Test::Unit::TestCase
     assert_not_nil @mixing.login(@mail, @password)
   end
 
-  def test_diary_update
-    ctx = []
-    ctx << {
-      'body' => 'スクリプトテスト',
-      'subtitle' => 'test'
+  def test_add_last_section
+    ctx = {}
+    ctx['sections'] = []
+    ctx['sections'] << {
+      'subtitle' => 'test',
+      'body' => '<p>スクリプトテスト</p>'
     }
     assert_not_nil @mixing.login(@mail, @password)
+    assert_not_nil(@mixing.add_last_section(ctx))
+  end
+
+  def test_multi_section_diary
+    ctx = {}
+    ctx['title'] = '大タイトル'
+    ctx['sections'] = [
+      { 'subtitle' => 'マルチセクション１',
+        'body' => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
+      { 'subtitle' => 'マルチセクション２',
+        'body' => '<p>ほげほげ</p>'}]
+
+    @mixing.login(@mail, @password)
     assert_not_nil(@mixing.add_diary(ctx))
   end
 end
