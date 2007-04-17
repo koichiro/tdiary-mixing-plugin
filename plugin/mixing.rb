@@ -1,6 +1,6 @@
 # mixing.rb
 #
-# mixi.jp updateing.
+# mixi.jp updating.
 #
 # options configurable through settings:
 #   @conf['mixing.userid'] : mixi login userid(e-mail)
