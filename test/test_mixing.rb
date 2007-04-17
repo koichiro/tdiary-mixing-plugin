@@ -7,8 +7,18 @@ require File.expand_path(File.dirname(__FILE__) + '/../plugin/ja/mixing.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../plugin/mixing.rb')
 
 class MixingTest < Test::Unit::TestCase
+  class Config < Hash
+    def initialize
+      super
+    end
+    def section_anchor
+      '<span>¢£</span>'
+    end
+  end
+
   def setup
-    @mixing = Mixing::new
+    conf = Config.new
+    @mixing = Mixing::new(conf)
     @mail = ENV['MIXING_ID']
     @password = ENV['MIXING_PW']
   end

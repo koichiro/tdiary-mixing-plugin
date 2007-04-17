@@ -15,7 +15,8 @@ require 'mechanize'
 class Mixing
   MIXI_URL = 'http://mixi.jp'
 
-  def initialize
+  def initialize(conf)
+    @conf = conf
     @agent = WWW::Mechanize.new
     @agent.user_agent_alias = 'Mac Safari'
   end
@@ -38,7 +39,7 @@ class Mixing
     content = ''
     ctx['sections'].each do |section|
       content += "\n" if content != ''
-      content += '¢£ ' + html_strip(section['subtitle']) + "\n"
+      content += html_strip(@conf.section_anchor) + ' ' + html_strip(section['subtitle']) + "\n"
       content += html_strip(section['body'])
     end
 
@@ -84,7 +85,7 @@ class Mixing
   end
 end
 
-@mixing = Mixing::new
+@mixing = Mixing::new(@conf)
 
 def mixing_update
   return if /^comment|^showcomment/ =~ @mode
