@@ -147,7 +147,7 @@ def mixing_update
     }
   end
 
-  rule = unless @conf['mixing.section_to_diary'] ? Mixing::DiaryRule.new(@conf) : Mixing::SectionRule.new(@conf)
+  rule = @conf['mixing.section_to_diary'] == false ? Mixing::DiaryRule.new(@conf) : Mixing::SectionRule.new(@conf)
   rule.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
   # append / replace
   rule.send(@mode, mixi_context)
