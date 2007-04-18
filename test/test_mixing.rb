@@ -18,7 +18,7 @@ class MixingTest < Test::Unit::TestCase
 
   def setup
     @conf = Config.new
-    @mixing = Mixing::Mixing.new(@conf)
+    @mixing = Mixing::Agent.new(@conf)
     @mail = ENV['MIXING_ID']
     @password = ENV['MIXING_PW']
   end

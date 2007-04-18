@@ -14,7 +14,7 @@ require 'mechanize'
 
 module Mixing
 
-class Mixing
+class Agent
   MIXI_URL = 'http://mixi.jp'
 
   def initialize(conf)
@@ -82,6 +82,11 @@ class Mixing
 #    p r.body
   end
 
+  def find_diary(title)
+    page = @agent.get(MIXI_URL + '/list_diary.pl')
+    page.
+  end
+
   def html_strip( s )
     s.gsub("</p>", "\n").gsub(/<.*?>/, "")
   end
@@ -89,7 +94,7 @@ end
 
 class Rule
   def initialize(conf)
-    @mixing = Mixing.new(conf)
+    @mixing = Agent.new(conf)
   end
   
   def login(userid, password)
@@ -112,6 +117,10 @@ end
 class DiaryRule < Rule
   def append( ctx )
     @mixing.add_diary( ctx )
+  end
+  
+  def replace( ctx )
+    @mixing.find_dairy( ctx )
   end
 end
 
