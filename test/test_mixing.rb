@@ -74,7 +74,7 @@ class MixingTest < Test::Unit::TestCase
       { 'subtitle' => 'マルチセクション２',
         'body' => '<p>ほげほげ</p>'}]
 
-    rule = Mixing::Section.new(@conf)
+    rule = Mixing::SectionRule.new(@conf)
     rule.login(@mail, @password)
     rule.append(ctx)
   end
