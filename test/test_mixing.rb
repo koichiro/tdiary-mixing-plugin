@@ -78,4 +78,38 @@ class MixingTest < Test::Unit::TestCase
     rule.login(@mail, @password)
     rule.append(ctx)
   end
+
+  def test_update_diary
+    ctx = {}
+    ctx['title'] = 'test'
+    ctx['sections'] = []
+    ctx['sections'] << {
+      'subtitle' => 'test',
+      'body' => '<p>スクリプトテスト</p>'
+    }
+    assert_not_nil @mixing.login(@mail, @password)
+    assert_not_nil(@mixing.add_last_section(ctx))
+
+    ctx['sections'][0]['body'] = '<p>スクリプトで更新</p>'
+    @mixing.update_diary(ctx)
+  end
+
+  def test_update_section
+    ctx = {}
+    ctx['title'] = '大タイトル'
+    ctx['sections'] = [
+      { 'subtitle' => 'マルチセクション１',
+        'body' => "<p>パラグラフ１</p><p>パラグラフ２</p>"}]
+    assert_not_nil @mixing.login(@mail, @password)
+    assert_not_nil(@mixing.add_last_section(ctx))
+
+    ctx['sections'] << { 'subtitle' => 'マルチセクション２',
+        'body' => '<p>ほげほげ</p>'}
+
+    assert_not_nil(@mixing.add_last_section(ctx))
+
+    ctx['sections'][0]['body'] = '<p>スクリプトでセクション再更新１</p>'
+    ctx['sections'][1]['body'] = '<p>スクリプトでセクション再更新２</p>'
+    @mixing.update_section(ctx)
+  end
 end

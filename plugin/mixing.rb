@@ -38,13 +38,7 @@ class Agent
   end
 
   def add_diary(ctx)
-    content = ''
-    ctx['sections'].each do |section|
-      content += "\n" if content != ''
-      content += html_strip(@conf.section_anchor) + ' ' + html_strip(section['subtitle']) + "\n"
-      content += html_strip(section['body'])
-    end
-
+    content = serial_diary(ctx)
     edit_diary(ctx['title'], content)
   end
 
@@ -52,19 +46,64 @@ class Agent
     begin
       open_edit_diary
       input_diary(title, content)
-      confirm_diary
+      confirm_add_diary
     rescue
       p $!.to_s
       p $!.backtrace
     end
   end
 
+  def update_section(ctx)
+    ctx['sections'].each do |section|
+      title = html_strip(section['subtitle'])
+      body = html_strip(section['body'])
+      find_update_diary(title, body)
+    end
+  end
+
+  def update_diary(ctx)
+    begin
+      title = ctx['title']
+      content = serial_diary(ctx)
+      find_update_diary(title, content)
+    rescue
+      p $!.to_s
+      p $!.backtrace
+    end
+  end
+
+  def find_update_diary(title, content)
+    link = find_diary(title)
+    return unless link
+    link.href =~ /id=([0-9]+)/
+    id = $1
+    open_edit_diary_at(id)
+    input_diary(title, content)
+    confirm_edit_diary
+  end
+
   private
+
+  def serial_diary(ctx)
+    content = ''
+    ctx['sections'].each do |section|
+      content += "\n" if content != ''
+      content += html_strip(@conf.section_anchor) + ' ' + html_strip(section['subtitle']) + "\n"
+      content += html_strip(section['body'])
+    end
+    content
+  end
 
   def open_edit_diary
     page = @agent.get(MIXI_URL + '/list_diary.pl')
     form = page.forms.action('add_diary.pl').first
     r = @agent.submit(form)
+  end
+
+  def open_edit_diary_at(id)
+    page = @agent.page
+    link = page.links.with.href(/edit_diary.pl\?id=#{id}/)
+    page = link.click
   end
 
   def input_diary(title, content)
@@ -75,16 +114,30 @@ class Agent
     r = @agent.submit(form)
   end
 
-  def confirm_diary
+  def confirm_add_diary
+   confirm_diary('add_diary.pl')
+  end
+  
+  def confirm_edit_diary
+    confirm_diary('edit_diary.pl')
+  end
+
+  def confirm_diary(action)
     page = @agent.page
-    form = page.forms.action('add_diary.pl').first
+    form = page.forms.action(action).first
     r = @agent.submit(form)
-#    p r.body
   end
 
   def find_diary(title)
     page = @agent.get(MIXI_URL + '/list_diary.pl')
-    page.
+    page.links.with.href(/^view_diary\.pl.*/).each do |link|
+#      p "#{title} = #{link.text}"
+#      if link.text == title
+#        p "Hit!"
+#      end
+      return link if link.text == title
+    end
+    return nil
   end
 
   def html_strip( s )
@@ -101,16 +154,17 @@ class Rule
     @mixing.login(userid, password)
   end
   
-  def append( ctx )
-  end
-  
-  def replace( ctx )
-  end
+  def append( ctx ) end
+  def replace( ctx ) end
 end
 
 class SectionRule < Rule
   def append( ctx )
     @mixing.add_last_section( ctx )
+  end
+
+  def replace( ctx )
+    @mixing.update_section( ctx )
   end
 end
 
@@ -120,7 +174,7 @@ class DiaryRule < Rule
   end
   
   def replace( ctx )
-    @mixing.find_dairy( ctx )
+    @mixing.update_diary( ctx )
   end
 end
 
@@ -141,12 +195,7 @@ def mixing_update
 #  log.close
 
   mixi_context = {}
-  if diary.title == ''
-    mixi_context['title'] = 'タイトル'
-  else
-    mixi_context['title'] = diary.title
-  end
-
+  mixi_context['title'] = diary.title == '' ? 'タイトル' : diary.title
   mixi_context['sections'] = []
 
   diary.each_section do |section|
