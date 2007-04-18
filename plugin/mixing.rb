@@ -12,6 +12,8 @@
 require 'rubygems'
 require 'mechanize'
 
+module Mixing
+
 class Mixing
   MIXI_URL = 'http://mixi.jp'
 
@@ -85,7 +87,35 @@ class Mixing
   end
 end
 
-@mixing = Mixing::new(@conf)
+class Rule
+  def initialize(conf)
+    @mixing = Mixing.new(conf)
+  end
+  
+  def login(userid, password)
+    @mixing.login(userid, password)
+  end
+  
+  def append( ctx )
+  end
+  
+  def replace( ctx )
+  end
+end
+
+class SectionRule < Rule
+  def append( ctx )
+    @mixing.add_last_section( ctx )
+  end
+end
+
+class DiaryRule < Rule
+  def append( ctx )
+    @mixing.add_diary( ctx )
+  end
+end
+
+end
 
 def mixing_update
   return if /^comment|^showcomment/ =~ @mode
@@ -117,15 +147,10 @@ def mixing_update
     }
   end
 
-  @mixing.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
-  if @mode == 'append' then
-    unless @conf['mixing.section_to_diary']
-      @mixing.add_diary( mixi_context )
-    else
-      @mixing.add_last_section( mixi_context )
-    end
-  elsif @mode == 'replace' then
-  end
+  rule = unless @conf['mixing.section_to_diary'] ? Mixing::DiaryRule.new(@conf) : Mixing::SectionRule.new(@conf)
+  rule.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
+  # append / replace
+  rule.send(@mode, mixi_context)
 end
 
 def mixing_update_proc
