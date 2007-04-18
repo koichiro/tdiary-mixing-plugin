@@ -37,6 +37,14 @@ class Agent
     edit_diary(html_strip(section['subtitle']), html_strip(section['body']))
   end
 
+  def add_new_section(ctx)
+    ctx['sections'].each do |section|
+      title = html_strip(section['subtitle'])
+      link = find_diary(title)
+      edit_diary(title, html_strip(section['body'])) unless link
+    end
+  end
+
   def add_diary(ctx)
     content = serial_diary(ctx)
     edit_diary(ctx['title'], content)
@@ -160,7 +168,7 @@ end
 
 class SectionRule < Rule
   def append( ctx )
-    @mixing.add_last_section( ctx )
+    @mixing.add_new_section( ctx )
   end
 
   def replace( ctx )
