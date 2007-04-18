@@ -65,17 +65,17 @@ class MixingTest < Test::Unit::TestCase
     rule.append(ctx)
   end
 
-#  def test_section_rule
-#    ctx = {}
-#    ctx['title'] = '大タイトル'
-#    ctx['sections'] = [
-#      { 'subtitle' => 'マルチセクション１',
-#        'body' => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
-#      { 'subtitle' => 'マルチセクション２',
-#        'body' => '<p>ほげほげ</p>'}]
-#
-#    rule = Mixing::Section.new(@conf)
-#    rule.login(@mail, @password)
-#    rule.append(ctx)
-#  end
+  def test_section_rule
+    ctx = {}
+    ctx['title'] = '大タイトル'
+    ctx['sections'] = [
+      { 'subtitle' => 'マルチセクション１',
+        'body' => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
+      { 'subtitle' => 'マルチセクション２',
+        'body' => '<p>ほげほげ</p>'}]
+
+    rule = Mixing::Section.new(@conf)
+    rule.login(@mail, @password)
+    rule.append(ctx)
+  end
 end
