@@ -137,7 +137,8 @@ class Agent
   end
 
   def find_diary(title)
-    page = @agent.get(MIXI_URL + '/list_diary.pl')
+    page = @agent.page
+    page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
     page.links.with.href(/^view_diary\.pl.*/).each do |link|
 #      p "#{title} = #{link.text}"
 #      if link.text == title
