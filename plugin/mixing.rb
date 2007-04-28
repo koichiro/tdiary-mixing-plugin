@@ -189,6 +189,11 @@ end
 
 end
 
+def mixing_pick_image( date )
+  return [] unless method_define?(:image_list)
+  image_list( date )
+end
+
 def mixing_update
   return if /^comment|^showcomment/ =~ @mode
 
