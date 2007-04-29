@@ -134,10 +134,6 @@ class Agent
 
   def input_diary(title, content, images = [])
     page = @agent.page
-    
-    require 'pp'
-    pp page
-    pp page.forms.with.name('diary')
 
     form = page.forms.with.name('diary').first
     form.diary_title = title
