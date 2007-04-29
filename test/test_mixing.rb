@@ -30,6 +30,7 @@ class MixingTest < Test::Unit::TestCase
   def test_add_last_section
     ctx = {}
     ctx[:sections] = []
+    ctx[:images] = []
     ctx[:sections] << {
       :subtitle => 'test',
       :body => '<p>スクリプトテスト</p>'
@@ -40,7 +41,8 @@ class MixingTest < Test::Unit::TestCase
 
   def test_multi_section_diary
     ctx = {}
-    ctx[:title] = '大タイトル'
+    ctx[:title] = 'マルチセクションテスト'
+    ctx[:images] = []
     ctx[:sections] = [
       { :subtitle => 'マルチセクション１',
         :body => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
@@ -53,11 +55,12 @@ class MixingTest < Test::Unit::TestCase
   
   def test_diary_rule
     ctx = {}
-    ctx[:title] = '大タイトル'
+    ctx[:title] = 'ダイアリールール'
+    ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => 'マルチセクション１',
+      { :subtitle => 'ダイアリー１',
         :body => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
-      { :subtitle => 'マルチセクション２',
+      { :subtitle => 'ダイアリー２',
         :body => '<p>ほげほげ</p>'}]
 
     rule = Mixing::DiaryRule.new(@conf)
@@ -67,11 +70,12 @@ class MixingTest < Test::Unit::TestCase
 
   def test_section_rule
     ctx = {}
-    ctx[:title] = '大タイトル'
+    ctx[:title] = 'セクションルール'
+    ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => 'マルチセクション１',
+      { :subtitle => 'セクション１',
         :body => "<p>パラグラフ１</p><p>パラグラフ２</p>"},
-      { :subtitle => 'マルチセクション２',
+      { :subtitle => 'セクション２',
         :body => '<p>ほげほげ</p>'}]
 
     rule = Mixing::SectionRule.new(@conf)
@@ -81,13 +85,14 @@ class MixingTest < Test::Unit::TestCase
 
   def test_update_diary
     ctx = {}
-    ctx[:title] = 'test'
+    ctx[:title] = '日記更新テスト'
+    ctx[:images] = []
     ctx[:sections] = []
     ctx[:sections] << {
       :subtitle => 'test',
       :body => '<p>スクリプトテスト</p>'
     }
-    assert_not_nil @mixing.login(@mail, @password)
+    assert_not_nil(@mixing.login(@mail, @password))
     assert_not_nil(@mixing.add_last_section(ctx))
 
     ctx[:sections][0][:body] = '<p>スクリプトで更新</p>'
@@ -96,14 +101,16 @@ class MixingTest < Test::Unit::TestCase
 
   def test_update_section
     ctx = {}
-    ctx[:title] = '大タイトル'
+    ctx[:title] = 'セクション更新テスト'
+    ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => 'マルチセクション１',
+      { :subtitle => 'セクション更新１',
         :body => "<p>パラグラフ１</p><p>パラグラフ２</p>"}]
-    assert_not_nil @mixing.login(@mail, @password)
+    assert_not_nil(@mixing.login(@mail, @password))
     assert_not_nil(@mixing.add_last_section(ctx))
 
-    ctx[:sections] << { 'subtitle' => 'マルチセクション２',
+    ctx[:sections] << { 
+        :subtitle => 'セクション更新２',
         :body => '<p>ほげほげ</p>'}
 
     assert_not_nil(@mixing.add_last_section(ctx))
@@ -126,8 +133,5 @@ class MixingTest < Test::Unit::TestCase
     rule = Mixing::DiaryRule.new(@conf)
     rule.login(@mail, @password)
     rule.append(ctx)
-
-    
-    
   end
 end

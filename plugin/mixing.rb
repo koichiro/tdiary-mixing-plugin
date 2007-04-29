@@ -34,12 +34,13 @@ class Agent
 
   def add_last_section(ctx)
     section = ctx[:sections].last
-    edit_diary(html_strip(section[:subtitle]), html_strip(section[:body], ctx[:images]))
+    edit_diary(html_strip(section[:subtitle]), html_strip(section[:body]), ctx[:images])
   end
 
   def add_new_section(ctx)
     ctx[:sections].each do |section|
       title = html_strip(section[:subtitle])
+      # not same diary
       link = find_diary(title)
       edit_diary(title, html_strip(section[:body]), ctx[:images]) unless link
     end
@@ -65,7 +66,7 @@ class Agent
     ctx[:sections].each do |section|
       title = html_strip(section[:subtitle])
       body = html_strip(section[:body])
-      find_update_diary(title, body)
+      find_update_diary(title, body, ctx[:images])
     end
   end
 
@@ -73,16 +74,20 @@ class Agent
     begin
       title = ctx[:title]
       content = serial_diary(ctx)
-      find_update_diary(title, content)
+      find_update_diary(title, content, ctx[:images])
     rescue
       p $!.to_s
       p $!.backtrace
     end
   end
 
-  def find_update_diary(title, content)
+  def find_update_diary(title, content, images)
     link = find_diary(title)
-    return unless link
+    unless link
+      # added new diary
+      edit_diary(title, content, images)
+      return
+    end
     link.href =~ /id=([0-9]+)/
     id = $1
     open_edit_diary_at(id)
@@ -127,8 +132,13 @@ class Agent
     page = link.click
   end
 
-  def input_diary(title, content, images)
+  def input_diary(title, content, images = [])
     page = @agent.page
+    
+    require 'pp'
+    pp page
+    pp page.forms.with.name('diary')
+
     form = page.forms.with.name('diary').first
     form.diary_title = title
     form['diary_body'] = content
@@ -245,7 +255,7 @@ end
 
 def mixing_update_proc
   return unless @conf['mixing.userid'] || @conf['mixing.password']
-  return unless @cgi.params['mixing_update'][0] == 'false'
+  return unless @cgi.params['mixing_update'][0] == 'true'
 
   mixing_update
 end
@@ -294,7 +304,7 @@ def mixing_edit_proc
   checked = @cgi.params['mixing_update'][0] == 'true' ? ' checked' : '' if @cgi.params['mixing_update'][0]
   r = <<-HTML
   <div class="checkbox">
-  <input type="checkbox" name="mixing_update" value="false"#{checked} >
+  <input type="checkbox" name="mixing_update" value="true"#{checked} >
   </div>
   #{@mixing_edit_label}
   HTML
