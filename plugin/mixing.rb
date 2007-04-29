@@ -33,27 +33,27 @@ class Agent
   end
 
   def add_last_section(ctx)
-    section = ctx['sections'].last
-    edit_diary(html_strip(section['subtitle']), html_strip(section['body']))
+    section = ctx[:sections].last
+    edit_diary(html_strip(section[:subtitle]), html_strip(section[:body], ctx[:images]))
   end
 
   def add_new_section(ctx)
-    ctx['sections'].each do |section|
-      title = html_strip(section['subtitle'])
+    ctx[:sections].each do |section|
+      title = html_strip(section[:subtitle])
       link = find_diary(title)
-      edit_diary(title, html_strip(section['body'])) unless link
+      edit_diary(title, html_strip(section[:body]), ctx[:images]) unless link
     end
   end
 
   def add_diary(ctx)
     content = serial_diary(ctx)
-    edit_diary(ctx['title'], content)
+    edit_diary(ctx[:title], content, ctx[:images])
   end
 
-  def edit_diary(title = '', content  = '')
+  def edit_diary(title = '', content  = '', images = [])
     begin
       open_edit_diary
-      input_diary(title, content)
+      input_diary(title, content, images)
       confirm_add_diary
     rescue
       p $!.to_s
@@ -62,16 +62,16 @@ class Agent
   end
 
   def update_section(ctx)
-    ctx['sections'].each do |section|
-      title = html_strip(section['subtitle'])
-      body = html_strip(section['body'])
+    ctx[:sections].each do |section|
+      title = html_strip(section[:subtitle])
+      body = html_strip(section[:body])
       find_update_diary(title, body)
     end
   end
 
   def update_diary(ctx)
     begin
-      title = ctx['title']
+      title = ctx[:title]
       content = serial_diary(ctx)
       find_update_diary(title, content)
     rescue
@@ -90,14 +90,27 @@ class Agent
     confirm_edit_diary
   end
 
+  def find_diary(title)
+    page = @agent.page
+    page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
+    page.links.with.href(/^view_diary\.pl.*/).each do |link|
+#      p "#{title} = #{link.text}"
+#      if link.text == title
+#        p "Hit!"
+#      end
+      return link if link.text == title
+    end
+    return nil
+  end
+
   private
 
   def serial_diary(ctx)
     content = ''
-    ctx['sections'].each do |section|
+    ctx[:sections].each do |section|
       content += "\n" if content != ''
-      content += html_strip(@conf.section_anchor) + ' ' + html_strip(section['subtitle']) + "\n"
-      content += html_strip(section['body'])
+      content += html_strip(@conf.section_anchor) + ' ' + html_strip(section[:subtitle]) + "\n"
+      content += html_strip(section[:body])
     end
     content
   end
@@ -114,11 +127,20 @@ class Agent
     page = link.click
   end
 
-  def input_diary(title, content)
+  def input_diary(title, content, images)
     page = @agent.page
     form = page.forms.with.name('diary').first
     form.diary_title = title
     form['diary_body'] = content
+
+    # image upload
+    i = 1
+    images.each do |image|
+      break if i > 3
+      form.file_uploads.name("photo" + i.to_s).first.file_name = image
+      i += 1
+    end
+
     r = @agent.submit(form)
   end
 
@@ -134,19 +156,6 @@ class Agent
     page = @agent.page
     form = page.forms.action(action).first
     r = @agent.submit(form)
-  end
-
-  def find_diary(title)
-    page = @agent.page
-    page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
-    page.links.with.href(/^view_diary\.pl.*/).each do |link|
-#      p "#{title} = #{link.text}"
-#      if link.text == title
-#        p "Hit!"
-#      end
-      return link if link.text == title
-    end
-    return nil
   end
 
   def html_strip( s )
@@ -190,8 +199,15 @@ end
 end
 
 def mixing_pick_image( date )
-  return [] unless method_define?(:image_list)
-  image_list( date )
+  return [] unless respond_to?(:image_list)
+  return [] unless @image_dir
+  images = image_list( date )
+  r = []
+  images.each do |image|
+    next unless /\.jpg|\.jpeg/ =~ File.extname(image)
+    r << @image_dir + '/' + image
+  end
+  r
 end
 
 def mixing_update
@@ -209,15 +225,17 @@ def mixing_update
 #  log.close
 
   mixi_context = {}
-  mixi_context['title'] = diary.title == '' ? 'タイトル' : diary.title
-  mixi_context['sections'] = []
+  mixi_context[:title] = diary.title == '' ? 'タイトル' : diary.title
+  mixi_context[:sections] = []
 
   diary.each_section do |section|
-    mixi_context['sections'] << {
-      'body' => section.body_to_html,
-      'subtitle' => section.subtitle_to_html
+    mixi_context[:sections] << {
+      :body => section.body_to_html,
+      :subtitle => section.subtitle_to_html
     }
   end
+
+  mixi_context[:images] = mixing_pick_image( date )
 
   rule = @conf['mixing.section_to_diary'] == false ? Mixing::DiaryRule.new(@conf) : Mixing::SectionRule.new(@conf)
   rule.login(@conf['mixing.userid'], @conf['mixing.password'].unpack('m').first)
