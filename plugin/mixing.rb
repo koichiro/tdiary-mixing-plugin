@@ -143,7 +143,7 @@ class Agent
     i = 1
     images.each do |image|
       break if i > 3
-      form.file_uploads.name("photo" + i.to_s).first.file_name = image
+      form.file_uploads.name("photo" + i.to_s).first.file_name = image.untaint
       i += 1
     end
 
