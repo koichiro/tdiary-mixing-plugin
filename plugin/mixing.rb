@@ -238,7 +238,7 @@ def mixing_update
   diary.each_section do |section|
     mixi_context[:sections] << {
       :body => apply_plugin( section.body_to_html ),
-      :subtitle => section.stripped_subtitle_to_html
+      :subtitle => section.stripped_subtitle ? section.stripped_subtitle_to_html : mixi_context[:title]
     }
   end
 
