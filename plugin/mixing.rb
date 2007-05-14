@@ -165,6 +165,7 @@ class Agent
   end
 
   def html_strip( s )
+    return '' unless s
     s.gsub("</p>", "\n").gsub(/<.*?>/, "")
   end
 end
