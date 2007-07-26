@@ -21,11 +21,14 @@ class Agent
     @conf = conf
     @agent = WWW::Mechanize.new
     @agent.user_agent_alias = 'Mac Safari'
+#    @agent.user_agent_alias = 'Windows IE 6'
+#    @agent.user_agent_alias = 'Mechanize'
+#    @agent.user_agent_alias = 'Linux Mozilla'
   end
 
   def login(userid, password)
     page = @agent.get(MIXI_URL + '/')
-    form = page.forms.action('login.pl').first
+    form = page.forms.action('/login.pl').first
     form.email = userid
     form.password = password
     @agent.submit(form)
