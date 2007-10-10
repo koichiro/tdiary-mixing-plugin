@@ -32,7 +32,7 @@ class Agent
     form.email = userid
     form.password = password
     @agent.submit(form)
-    @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
+#    @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
   end
 
   def add_last_section(ctx)
@@ -91,8 +91,9 @@ class Agent
       edit_diary(title, content, images)
       return
     end
-    link.href =~ /id=([0-9]+)/
+    link.href =~ /id=([0-9]+)&owner_id=([0-9]+)/
     id = $1
+    owner_id = $2
     open_edit_diary_at(id)
     input_diary(title, content)
     confirm_edit_diary
@@ -102,9 +103,10 @@ class Agent
     page = @agent.page
     page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
     page.links.with.href(/^view_diary\.pl.*/).each do |link|
-#      p "#{title} = #{link.text}"
 #      if link.text == title
 #        p "Hit!"
+#        p link.href
+#        p "#{title} = #{link.text}"
 #      end
       return link if link.text == title
     end
@@ -124,15 +126,16 @@ class Agent
   end
 
   def open_edit_diary
-    page = @agent.get(MIXI_URL + '/list_diary.pl')
-    form = page.forms.action('add_diary.pl').first
-    r = @agent.submit(form)
+    page = @agent.page.uri == MIXI_URL + '/home.pl' ? @agent.page : @agent.get(MIXI_URL + '/home.pl')
+    link = page.links.text(/日記を書く/)
+    @agent.click(link)
   end
 
   def open_edit_diary_at(id)
     page = @agent.page
+    page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
     link = page.links.with.href(/edit_diary.pl\?id=#{id}/)
-    page = link.click
+    page = @agent.click(link)
   end
 
   def input_diary(title, content, images = [])

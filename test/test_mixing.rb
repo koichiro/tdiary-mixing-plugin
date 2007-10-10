@@ -89,7 +89,7 @@ class MixingTest < Test::Unit::TestCase
     ctx[:images] = []
     ctx[:sections] = []
     ctx[:sections] << {
-      :subtitle => 'test',
+      :subtitle => '日記更新テスト',
       :body => '<p>スクリプトテスト</p>'
     }
     assert_not_nil(@mixing.login(@mail, @password))
