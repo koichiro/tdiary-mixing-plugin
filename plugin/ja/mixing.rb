@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 @mixing_label = 'mixiとの連携'
 @mixing_desc = '日記に書いた内容をmixiにもpostします。'

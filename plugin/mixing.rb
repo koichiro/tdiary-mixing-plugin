@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # mixing.rb
 #
 # mixi.jp updating.
@@ -11,6 +12,7 @@
 #
 require 'rubygems'
 require 'mechanize'
+require 'kconv'
 
 module Mixing
 
@@ -108,7 +110,7 @@ class Agent
 #        p link.href
 #        p "#{title} = #{link.text}"
 #      end
-      return link if link.text == title
+      return link if link.text == title.toeuc
     end
     return nil
   end
@@ -127,7 +129,7 @@ class Agent
 
   def open_edit_diary
     page = @agent.page.uri == MIXI_URL + '/home.pl' ? @agent.page : @agent.get(MIXI_URL + '/home.pl')
-    link = page.links.text(/日記を書く/)
+    link = page.links.with.href(/^add_diary\.pl/)
     @agent.click(link)
   end
 
@@ -142,8 +144,8 @@ class Agent
     page = @agent.page
 
     form = page.forms.with.name('diary').first
-    form.diary_title = title
-    form['diary_body'] = content
+    form.diary_title = title.toeuc
+    form['diary_body'] = content.toeuc
 
     # image upload
     i = 1
@@ -238,7 +240,7 @@ def mixing_update
 #  log.close
 
   mixi_context = {}
-  mixi_context[:title] = diary.title == '' ? 'タイトル' : diary.title
+  mixi_context[:title] = diary.title == '' ? 'タイトル'.toeuc : diary.title
   mixi_context[:sections] = []
 
   diary.each_section do |section|
