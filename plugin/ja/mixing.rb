@@ -1,18 +1,18 @@
 
-@mixing_label = 'mixi¤È¤ÎÏ¢·È'
-@mixing_desc = 'Æüµ­¤Ë½ñ¤¤¤¿ÆâÍÆ¤òmixi¤Ë¤âpost¤·¤Ş¤¹¡£'
+@mixing_label = 'mixiã¨ã®é€£æº'
+@mixing_desc = 'æ—¥è¨˜ã«æ›¸ã„ãŸå†…å®¹ã‚’mixiã«ã‚‚postã—ã¾ã™ã€‚'
 
-@mixing_userid_label = '¥æ¡¼¥¶¡¼ID'
-@mixing_userid_desc = 'mixi¤Ë¥í¥°¥¤¥ó¤¹¤ëºİ¤Î¥æ¡¼¥¶¡¼ID¤òÀßÄê¤·¤Ş¤¹(mixi¤ËÅĞÏ¿¤·¤¿e-mail¤Ç¤¹)¡£'
-@mixing_password_label = '¥Ñ¥¹¥ï¡¼¥É'
-@mixing_password_desc = 'mixi¤Ë¥í¥°¥¤¥ó¤¹¤ëºİ¤Î¥Ñ¥¹¥ï¡¼¥É¤òÀßÄê¤·¤Ş¤¹¡£'
-@mixing_default_update_label = '¾ï¤ËmixiÆüµ­¤â¹¹¿·'
-@mixing_default_update_desc = 'mixiÆüµ­¤ò¹¹¿·¤¹¤ë¤ò¥Ç¥Õ¥©¥ë¥È¤Ë¤·¤Ş¤¹'
-@mixing_section_to_diary_label = '¥»¥¯¥·¥ç¥ó¤ÈmixiÆüµ­'
-@mixing_section_to_diary_desc = '³Æ¥»¥¯¥·¥ç¥óËè¤Ëmixi¤Î¤Ò¤È¤Ä¤ÎÆüµ­¤È¤·¤ÆÅê¹Æ¤¹¤ë'
+@mixing_userid_label = 'ãƒ¦ãƒ¼ã‚¶ãƒ¼ID'
+@mixing_userid_desc = 'mixiã«ãƒ­ã‚°ã‚¤ãƒ³ã™ã‚‹éš›ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼IDã‚’è¨­å®šã—ã¾ã™(mixiã«ç™»éŒ²ã—ãŸe-mailã§ã™)ã€‚'
+@mixing_password_label = 'ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰'
+@mixing_password_desc = 'mixiã«ãƒ­ã‚°ã‚¤ãƒ³ã™ã‚‹éš›ã®ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’è¨­å®šã—ã¾ã™ã€‚'
+@mixing_default_update_label = 'å¸¸ã«mixiæ—¥è¨˜ã‚‚æ›´æ–°'
+@mixing_default_update_desc = 'mixiæ—¥è¨˜ã‚’æ›´æ–°ã™ã‚‹ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã«ã—ã¾ã™'
+@mixing_section_to_diary_label = 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã¨mixiæ—¥è¨˜'
+@mixing_section_to_diary_desc = 'å„ã‚»ã‚¯ã‚·ãƒ§ãƒ³æ¯ã«mixiã®ã²ã¨ã¤ã®æ—¥è¨˜ã¨ã—ã¦æŠ•ç¨¿ã™ã‚‹'
 @mixing_diary_to_diary_desc = <<EOS
-1Æü¤ÎÆüµ­¤òmixi¤Î¤Ò¤È¤Ä¤ÎÆüµ­¤È¤·¤ÆÅê¹Æ¤¹¤ë(Ê£¿ô¤Î¥»¥¯¥·¥ç¥ó¤ò¤Ş¤È¤á¤ë)<br>
-mixi¤Î¥¿¥¤¥È¥ë¤Ë¤ÏtDiary¤ÎÆüµ­¥¿¥¤¥È¥ë¤ò»È¤¤¤Ş¤¹¡£É¬¤ºÆşÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£
+1æ—¥ã®æ—¥è¨˜ã‚’mixiã®ã²ã¨ã¤ã®æ—¥è¨˜ã¨ã—ã¦æŠ•ç¨¿ã™ã‚‹(è¤‡æ•°ã®ã‚»ã‚¯ã‚·ãƒ§ãƒ³ã‚’ã¾ã¨ã‚ã‚‹)<br>
+mixiã®ã‚¿ã‚¤ãƒˆãƒ«ã«ã¯tDiaryã®æ—¥è¨˜ã‚¿ã‚¤ãƒˆãƒ«ã‚’ä½¿ã„ã¾ã™ã€‚å¿…ãšå…¥åŠ›ã—ã¦ãã ã•ã„ã€‚
 EOS
 
-@mixing_edit_label = 'mixiÆüµ­¤ò¹¹¿·¤¹¤ë'
+@mixing_edit_label = 'mixiæ—¥è¨˜ã‚’æ›´æ–°ã™ã‚‹'

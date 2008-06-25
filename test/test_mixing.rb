@@ -12,7 +12,7 @@ class MixingTest < Test::Unit::TestCase
       super
     end
     def section_anchor
-      '<span>¢£</span>'
+      '<span>â– </span>'
     end
   end
 
@@ -33,7 +33,7 @@ class MixingTest < Test::Unit::TestCase
     ctx[:images] = []
     ctx[:sections] << {
       :subtitle => 'test',
-      :body => '<p>¥¹¥¯¥ê¥×¥È¥Æ¥¹¥È</p>'
+      :body => '<p>ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ†ã‚¹ãƒˆ</p>'
     }
     assert_not_nil @mixing.login(@mail, @password)
     assert_not_nil(@mixing.add_last_section(ctx))
@@ -41,13 +41,13 @@ class MixingTest < Test::Unit::TestCase
 
   def test_multi_section_diary
     ctx = {}
-    ctx[:title] = '¥Ş¥ë¥Á¥»¥¯¥·¥ç¥ó¥Æ¥¹¥È'
+    ctx[:title] = 'ãƒãƒ«ãƒã‚»ã‚¯ã‚·ãƒ§ãƒ³ãƒ†ã‚¹ãƒˆ'
     ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => '¥Ş¥ë¥Á¥»¥¯¥·¥ç¥ó£±',
-        :body => "<p>¥Ñ¥é¥°¥é¥Õ£±</p><p>¥Ñ¥é¥°¥é¥Õ£²</p>"},
-      { :subtitle => '¥Ş¥ë¥Á¥»¥¯¥·¥ç¥ó£²',
-        :body => '<p>¤Û¤²¤Û¤²</p>'}]
+      { :subtitle => 'ãƒãƒ«ãƒã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼‘',
+        :body => "<p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼‘</p><p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼’</p>"},
+      { :subtitle => 'ãƒãƒ«ãƒã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼’',
+        :body => '<p>ã»ã’ã»ã’</p>'}]
 
     @mixing.login(@mail, @password)
     assert_not_nil(@mixing.add_diary(ctx))
@@ -55,13 +55,13 @@ class MixingTest < Test::Unit::TestCase
   
   def test_diary_rule
     ctx = {}
-    ctx[:title] = '¥À¥¤¥¢¥ê¡¼¥ë¡¼¥ë'
+    ctx[:title] = 'ãƒ€ã‚¤ã‚¢ãƒªãƒ¼ãƒ«ãƒ¼ãƒ«'
     ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => '¥À¥¤¥¢¥ê¡¼£±',
-        :body => "<p>¥Ñ¥é¥°¥é¥Õ£±</p><p>¥Ñ¥é¥°¥é¥Õ£²</p>"},
-      { :subtitle => '¥À¥¤¥¢¥ê¡¼£²',
-        :body => '<p>¤Û¤²¤Û¤²</p>'}]
+      { :subtitle => 'ãƒ€ã‚¤ã‚¢ãƒªãƒ¼ï¼‘',
+        :body => "<p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼‘</p><p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼’</p>"},
+      { :subtitle => 'ãƒ€ã‚¤ã‚¢ãƒªãƒ¼ï¼’',
+        :body => '<p>ã»ã’ã»ã’</p>'}]
 
     rule = Mixing::DiaryRule.new(@conf)
     rule.login(@mail, @password)
@@ -70,13 +70,13 @@ class MixingTest < Test::Unit::TestCase
 
   def test_section_rule
     ctx = {}
-    ctx[:title] = '¥»¥¯¥·¥ç¥ó¥ë¡¼¥ë'
+    ctx[:title] = 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³ãƒ«ãƒ¼ãƒ«'
     ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => '¥»¥¯¥·¥ç¥ó£±',
-        :body => "<p>¥Ñ¥é¥°¥é¥Õ£±</p><p>¥Ñ¥é¥°¥é¥Õ£²</p>"},
-      { :subtitle => '¥»¥¯¥·¥ç¥ó£²',
-        :body => '<p>¤Û¤²¤Û¤²</p>'}]
+      { :subtitle => 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼‘',
+        :body => "<p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼‘</p><p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼’</p>"},
+      { :subtitle => 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼’',
+        :body => '<p>ã»ã’ã»ã’</p>'}]
 
     rule = Mixing::SectionRule.new(@conf)
     rule.login(@mail, @password)
@@ -85,47 +85,47 @@ class MixingTest < Test::Unit::TestCase
 
   def test_update_diary
     ctx = {}
-    ctx[:title] = 'Æüµ­¹¹¿·¥Æ¥¹¥È'
+    ctx[:title] = 'æ—¥è¨˜æ›´æ–°ãƒ†ã‚¹ãƒˆ'
     ctx[:images] = []
     ctx[:sections] = []
     ctx[:sections] << {
-      :subtitle => 'Æüµ­¹¹¿·¥Æ¥¹¥È',
-      :body => '<p>¥¹¥¯¥ê¥×¥È¥Æ¥¹¥È</p>'
+      :subtitle => 'æ—¥è¨˜æ›´æ–°ãƒ†ã‚¹ãƒˆ',
+      :body => '<p>ã‚¹ã‚¯ãƒªãƒ—ãƒˆãƒ†ã‚¹ãƒˆ</p>'
     }
     assert_not_nil(@mixing.login(@mail, @password))
     assert_not_nil(@mixing.add_last_section(ctx))
 
-    ctx[:sections][0][:body] = '<p>¥¹¥¯¥ê¥×¥È¤Ç¹¹¿·</p>'
+    ctx[:sections][0][:body] = '<p>ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§æ›´æ–°</p>'
     @mixing.update_diary(ctx)
   end
 
   def test_update_section
     ctx = {}
-    ctx[:title] = '¥»¥¯¥·¥ç¥ó¹¹¿·¥Æ¥¹¥È'
+    ctx[:title] = 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³æ›´æ–°ãƒ†ã‚¹ãƒˆ'
     ctx[:images] = []
     ctx[:sections] = [
-      { :subtitle => '¥»¥¯¥·¥ç¥ó¹¹¿·£±',
-        :body => "<p>¥Ñ¥é¥°¥é¥Õ£±</p><p>¥Ñ¥é¥°¥é¥Õ£²</p>"}]
+      { :subtitle => 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³æ›´æ–°ï¼‘',
+        :body => "<p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼‘</p><p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼’</p>"}]
     assert_not_nil(@mixing.login(@mail, @password))
     assert_not_nil(@mixing.add_last_section(ctx))
 
     ctx[:sections] << { 
-        :subtitle => '¥»¥¯¥·¥ç¥ó¹¹¿·£²',
-        :body => '<p>¤Û¤²¤Û¤²</p>'}
+        :subtitle => 'ã‚»ã‚¯ã‚·ãƒ§ãƒ³æ›´æ–°ï¼’',
+        :body => '<p>ã»ã’ã»ã’</p>'}
 
     assert_not_nil(@mixing.add_last_section(ctx))
 
-    ctx[:sections][0][:body] = '<p>¥¹¥¯¥ê¥×¥È¤Ç¥»¥¯¥·¥ç¥óºÆ¹¹¿·£±</p>'
-    ctx[:sections][1][:body] = '<p>¥¹¥¯¥ê¥×¥È¤Ç¥»¥¯¥·¥ç¥óºÆ¹¹¿·£²</p>'
+    ctx[:sections][0][:body] = '<p>ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§ã‚»ã‚¯ã‚·ãƒ§ãƒ³å†æ›´æ–°ï¼‘</p>'
+    ctx[:sections][1][:body] = '<p>ã‚¹ã‚¯ãƒªãƒ—ãƒˆã§ã‚»ã‚¯ã‚·ãƒ§ãƒ³å†æ›´æ–°ï¼’</p>'
     @mixing.update_section(ctx)
   end
 
   def test_fileupload
     ctx = {}
-    ctx[:title] = '²èÁü¥¢¥Ã¥×¥í¡¼¥É¥Æ¥¹¥È'
+    ctx[:title] = 'ç”»åƒã‚¢ãƒƒãƒ—ãƒ­ãƒ¼ãƒ‰ãƒ†ã‚¹ãƒˆ'
     ctx[:sections] = [
-      { :subtitle => '¥Ş¥ë¥Á¥»¥¯¥·¥ç¥ó£±',
-        :body => "<p>¥Ñ¥é¥°¥é¥Õ£±</p><p>¥Ñ¥é¥°¥é¥Õ£²</p>"}]
+      { :subtitle => 'ãƒãƒ«ãƒã‚»ã‚¯ã‚·ãƒ§ãƒ³ï¼‘',
+        :body => "<p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼‘</p><p>ãƒ‘ãƒ©ã‚°ãƒ©ãƒ•ï¼’</p>"}]
     ctx[:images] = [
       File.dirname(__FILE__) + '/sakura.jpg'
     ]

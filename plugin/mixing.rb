@@ -127,7 +127,7 @@ class Agent
 
   def open_edit_diary
     page = @agent.page.uri == MIXI_URL + '/home.pl' ? @agent.page : @agent.get(MIXI_URL + '/home.pl')
-    link = page.links.text(/Æüµ­¤ò½ñ¤¯/)
+    link = page.links.text(/æ—¥è¨˜ã‚’æ›¸ã/)
     @agent.click(link)
   end
 
@@ -238,7 +238,7 @@ def mixing_update
 #  log.close
 
   mixi_context = {}
-  mixi_context[:title] = diary.title == '' ? '¥¿¥¤¥È¥ë' : diary.title
+  mixi_context[:title] = diary.title == '' ? 'ã‚¿ã‚¤ãƒˆãƒ«' : diary.title
   mixi_context[:sections] = []
 
   diary.each_section do |section|
