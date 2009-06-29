@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 require 'test/unit'
-#require 'hpricot'
 require 'logger'
 
 def add_update_proc( * ) end
@@ -26,7 +25,6 @@ class MixingTest < Test::Unit::TestCase
     @password = ENV['MIXING_PW']
     WWW::Mechanize.log = Logger.new('test.log')
     WWW::Mechanize.log.level = Logger::INFO
-#    WWW::Mechanize.html_parser = Hpricot
   end
 
   def test_login
