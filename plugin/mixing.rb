@@ -7,7 +7,7 @@
 #   @conf['mixing.userid'] : mixi login userid(e-mail)
 #   @conf['mixing.password'] : mixi login password
 #
-# Copyright (c) 2007 Koichiro Ohba <koichiro@meadowy.org>
+# Copyright (c) 2007-2009 Koichiro Ohba <koichiro@meadowy.org>
 # Distributed under the GPL
 #
 require 'rubygems'
@@ -30,11 +30,11 @@ class Agent
 
   def login(userid, password)
     page = @agent.get(MIXI_URL + '/')
-    form = page.forms.action('/login.pl').first
-    form.email = userid
-    form.password = password
-    @agent.submit(form)
-#    @agent.get(MIXI_URL + '/check.pl?n=%2Fhome.pl')
+    page.form_with(:name => 'login_form') do |f|
+      f.field_with(:name => 'email').value = userid
+      f.field_with(:name => 'password').value = password
+      f.click_button
+    end
   end
 
   def add_last_section(ctx)
@@ -101,16 +101,21 @@ class Agent
     confirm_edit_diary
   end
 
+  def code_conv(s)
+    return s.toeuc unless WWW::Mechanize.html_parser == Nokogiri::HTML
+    s
+  end
+
   def find_diary(title)
     page = @agent.page
     page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
-    page.links.with.href(/^view_diary\.pl.*/).each do |link|
+    page.links_with(:href => /view_diary\.pl.*/).each do |link|
 #      if link.text == title
 #        p "Hit!"
 #        p link.href
 #        p "#{title} = #{link.text}"
 #      end
-      return link if link.text == title.toeuc
+      return link if link.text == code_conv(title)
     end
     return nil
   end
@@ -129,33 +134,31 @@ class Agent
 
   def open_edit_diary
     page = @agent.page.uri == MIXI_URL + '/home.pl' ? @agent.page : @agent.get(MIXI_URL + '/home.pl')
-    link = page.links.with.href(/^add_diary\.pl/)
-    @agent.click(link)
+    link = page.link_with(:href => /add_diary\.pl/)
+    link.click
   end
 
   def open_edit_diary_at(id)
     page = @agent.page
     page = (page.uri == MIXI_URL + '/list_diary.pl') ? page : @agent.get(MIXI_URL + '/list_diary.pl')
-    link = page.links.with.href(/edit_diary.pl\?id=#{id}/)
-    page = @agent.click(link)
+    link = page.link_with(:href => /edit_diary.pl\?id=#{id}/)
+    link.click
   end
 
   def input_diary(title, content, images = [])
-    page = @agent.page
-
-    form = page.forms.with.name('diary').first
-    form.diary_title = title.toeuc
-    form['diary_body'] = content.toeuc
+    form = @agent.page.form_with(:name => 'diary')
+    form.field_with(:name => 'diary_title').value = code_conv(title)
+    form.field_with(:name => 'diary_body').value = code_conv(content)
 
     # image upload
     i = 1
     images.each do |image|
       break if i > 3
-      form.file_uploads.name("photo" + i.to_s).first.file_name = image.untaint
+      form.file_upload_with("photo" + i.to_s).file_name = image.untaint
       i += 1
     end
 
-    r = @agent.submit(form)
+    r = form.click_button
   end
 
   def confirm_add_diary
@@ -168,8 +171,11 @@ class Agent
 
   def confirm_diary(action)
     page = @agent.page
-    form = page.forms.action(action).first
-    r = @agent.submit(form)
+    r = nil
+    page.form_with(:action => action) do |f|
+      r = f.click_button
+    end
+    r
   end
 
   def html_strip( s )
@@ -240,7 +246,7 @@ def mixing_update
 #  log.close
 
   mixi_context = {}
-  mixi_context[:title] = diary.title == '' ? 'タイトル'.toeuc : diary.title
+  mixi_context[:title] = diary.title == '' ? code_conv('タイトル') : diary.title
   mixi_context[:sections] = []
 
   diary.each_section do |section|
